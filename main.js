@@ -1,43 +1,27 @@
-async function getDistance(startPoint, endPoint) {
-    const apiUrl = 'https://dapi.kakao.com/v2/local/search/category.json';
-    const apiKey = 'your_kakao_api_key_here';
+function calculateDistance(start, end) {
+    var apiUrl = 'https://dapi.kakao.com/v2/local/search/category.json';
+    var apiKey = 'your_kakao_api_key_here';
 
-    const params = {
-        category_group_code: 'MT1',
-        x: startPoint,
-        y: endPoint
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', `${apiUrl}?category_group_code=MT1&x=${start}&y=${end}`, true);
+    xhr.setRequestHeader('Authorization', 'KakaoAK ' + apiKey);
+
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            if (xhr.status === 200) {
+                var response = JSON.parse(xhr.responseText);
+                var distance = response.documents[0].distance;
+                console.log(`출발지: ${start}, 도착지: ${end}, 거리: ${distance} 미터`);
+            } else {
+                console.error('API 호출 실패:', xhr.status, xhr.statusText);
+            }
+        }
     };
 
-    try {
-        const response = await fetch(apiUrl + '?' + new URLSearchParams(params), {
-            headers: {
-                'Authorization': 'KakaoAK ' + apiKey
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error('API 호출 실패');
-        }
-
-        const data = await response.json();
-        const distance = data.documents[0].distance;
-
-        return distance;
-    } catch (error) {
-        console.error('API 호출 에러:', error);
-        throw error;
-    }
+    xhr.send();
 }
 
-const startAddress = '서울시 강남구 역삼동';
-const endAddress = '서울시 송파구 가락동';
+var startAddress = '서울특별시 강남구 역삼동';
+var endAddress = '서울특별시 송파구 가락동';
 
-getDistance(startAddress, endAddress)
-    .then(distance => {
-        console.log(`출발지: ${startAddress}`);
-        console.log(`도착지: ${endAddress}`);
-        console.log(`거리: ${distance} 미터`);
-    })
-    .catch(error => {
-        console.error('거리 계산 실패:', error);
-    });
+calculateDistance(startAddress, endAddress);
