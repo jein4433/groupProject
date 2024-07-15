@@ -4,10 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    
 </head>
 <body>
-    <div id="map" style="width:1000px;height:700px;"></div>
+    <div id="map" style="width:700px;height:700px;"></div>
 	<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=8fa6250a0ecb635c10de0eb564e22c52"></script>
 	<script>
 		var container = document.getElementById('map');
@@ -18,130 +17,5 @@
 
 		var map = new kakao.maps.Map(container, options);
 	</script>
-
-<div id="map"></div>
-<div>
-    <label for="start">출발지:</label>
-    <input type="text" id="start" placeholder="출발지 주소를 입력하세요">
-</div>
-<div>
-    <label for="end">도착지:</label>
-    <input type="text" id="end" placeholder="도착지 주소를 입력하세요">
-</div>
-<button onclick="calculateAndDisplayRoute()">경로 표시하기</button>
-
-<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=8fa6250a0ecb635c10de0eb564e22c52"></script>
-<script>
-    var map = null;
-    var directionsService = new kakao.maps.services.Directions();
-
-    // 지도 초기화 함수
-    function initMap() {
-        var container = document.getElementById('map');
-        var options = {
-            center: new kakao.maps.LatLng(37.566826, 126.9786567), // 초기 중심 좌표 (서울)
-            level: 3
-        };
-        map = new kakao.maps.Map(container, options);
-    }
-
-    // 출발지와 도착지 경로 표시 함수
-    function calculateAndDisplayRoute() {
-        var start = document.getElementById('start').value;
-        var end = document.getElementById('end').value;
-
-        // 출발지, 도착지 좌표를 검색하여 경로를 표시
-        searchPlaces(start, end);
-    }
-
-    // 장소 검색 후 경로 표시 함수
-    function searchPlaces(start, end) {
-        var geocoder = new kakao.maps.services.Geocoder();
-
-        // 출발지 좌표 검색
-        geocoder.addressSearch(start, function (result, status) {
-            if (status === kakao.maps.services.Status.OK) {
-                var startLoc = new kakao.maps.LatLng(result[0].y, result[0].x);
-
-                // 도착지 좌표 검색
-                geocoder.addressSearch(end, function (result, status) {
-                    if (status === kakao.maps.services.Status.OK) {
-                        var endLoc = new kakao.maps.LatLng(result[0].y, result[0].x);
-
-                        // 경로 탐색 요청 설정
-                        var request = {
-                            origin: startLoc,
-                            destination: endLoc,
-                            travelMode: kakao.maps.services.TravelMode.TRANSIT // 도보 길찾기 모드
-                        };
-
-                        // 경로 탐색 요청
-                        directionsService.route(request, function (result, status) {
-                            if (status === kakao.maps.DirectionsStatus.OK) {
-                                var path = result.routes[0].path;
-                                var distance = result.routes[0].distance;
-                                displayRoute(path, distance);
-                            } else {
-                                alert('경로 검색에 실패했습니다.');
-                            }
-                        });
-                    } else {
-                        alert('도착지 주소를 찾을 수 없습니다.');
-                    }
-                });
-            } else {
-                alert('출발지 주소를 찾을 수 없습니다.');
-            }
-        });
-    }
-
-    // 경로와 거리를 지도에 표시하는 함수
-    function displayRoute(path, distance) {
-        // 기존에 그려진 선 제거
-        removeAllOverlays();
-
-        // 경로를 선으로 그리기
-        var polyline = new kakao.maps.Polyline({
-            path: path,
-            strokeWeight: 3,
-            strokeColor: '#FF0000',
-            strokeOpacity: 0.7,
-            strokeStyle: 'solid'
-        });
-        polyline.setMap(map);
-
-        // 출발지와 도착지 마커 표시
-        var startMarker = new kakao.maps.Marker({
-            position: path[0],
-            map: map,
-            title: '출발지'
-        });
-        var endMarker = new kakao.maps.Marker({
-            position: path[path.length - 1],
-            map: map,
-            title: '도착지'
-        });
-
-        // 지도의 중심을 경로의 중간 지점으로 설정
-        var bounds = new kakao.maps.LatLngBounds();
-        for (var i = 0; i < path.length; i++) {
-            bounds.extend(path[i]);
-        }
-        map.setBounds(bounds);
-
-        // 거리 표시
-        var resultDiv = document.getElementById('result');
-        resultDiv.innerHTML = '출발지에서 도착지까지의 거리: ' + distance + ' m';
-    }
-
-    // 지도에 그려진 선과 마커 제거 함수
-    function removeAllOverlays() {
-        map.removeOverlayMapTypeId(kakao.maps.MapTypeId.TRANSIT);
-    }
-
-    // 초기화 함수 호출하여 지도 초기화
-    initMap();
-</script>
-<div id="result"></div>
 </body>
 </html>
