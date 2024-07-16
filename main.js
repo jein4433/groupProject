@@ -24,6 +24,7 @@ function SearchHandle(event) {
 
 function searchPlaces() {
     var keyword = document.getElementById('search-start').value;
+    var keyword = document.getElementById('search-end').value;
 
     if (!keyword.replace(/^\s+|\s+$/g, '')) {
         alert('키워드를 입력해주세요!');
