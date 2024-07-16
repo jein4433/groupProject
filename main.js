@@ -116,7 +116,7 @@ function selectEndLocation(lat, lng) {
     alert('도착지 선택됨');
     infowindow.close();
     if (startCoords && endCoords) {
-        calculateMidpoint();
+        getRoute();
     }
 }
 
@@ -223,7 +223,7 @@ function getRoute(startLatLng, endLatLng) {
     var request = {
         origin: new kakao.maps.LatLng(startLatLng.lat, startLatLng.lng),
         destination: new kakao.maps.LatLng(endLatLng.lat, endLatLng.lng),
-        travelMode: kakao.maps.services.TravelMode.DRIVING
+     //   travelMode: kakao.maps.services.TravelMode.DRIVING
     };
 
     directionsService.route(request, function(result, status) {
