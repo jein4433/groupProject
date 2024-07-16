@@ -8,6 +8,7 @@ var map = new kakao.maps.Map(container, options);
 var ps = new kakao.maps.services.Places(); 
 var infowindow = new kakao.maps.InfoWindow({zIndex:1});
 var markers = [];
+var markers2 = [];
 
 function handleSearch(event) {
     if (event.key === 'Enter') {
@@ -20,7 +21,6 @@ function searchHandle(event) {
         searchDestination();
     }
 }
-
 
 function searchPlaces() {
     var keyword = document.getElementById('search-start').value;
@@ -98,18 +98,6 @@ function displayPagination(pagination) {
     paginationEl.appendChild(fragment);
 }
 
-function displayInfowindow(marker, title) {
-    var content = '<div style="padding:5px;z-index:1;">' + title + '</div>';
-    infowindow.setContent(content);
-    infowindow.open(map, marker);
-}
-
-function removeAllChildNods(el) {   
-    while (el.hasChildNodes()) {
-        el.removeChild(el.lastChild);
-    }
-}
-
 function toggleSearch() {
     var searchStart = document.getElementById('search-start');
     if (searchStart.style.display === 'none' || searchStart.style.display === '') {
@@ -120,8 +108,6 @@ function toggleSearch() {
     }
 }
 
-//
-
 function searchDestination() {
     var keyword2 = document.getElementById('search-end').value;
 
@@ -130,47 +116,47 @@ function searchDestination() {
         return false;
     }
 
-    ps.keywordSearch(keyword, placesSearchCB2);
+    ps.keywordSearch(keyword2, placesSearchCB2);
 }
 
 function placesSearchCB2(data, status, pagination) {
     if (status === kakao.maps.services.Status.OK) {
-        var bounds = new kakao.maps.LatLngBounds();
+        var bounds2 = new kakao.maps.LatLngBounds();
         
         for (var i = 0; i < data.length; i++) {
             displayMarker2(data[i]);    
-            bounds.extend(new kakao.maps.LatLng(data[i].y, data[i].x));
+            bounds2.extend(new kakao.maps.LatLng(data[i].y, data[i].x));
         }
 
-        map.setBounds(bounds);
+        map.setBounds(bounds2);
 
         displayPagination2(pagination);
     } 
 }
 
 function displayMarker2(place) {
-    var marker = new kakao.maps.Marker({
+    var marker2 = new kakao.maps.Marker({
         map: map,
         position: new kakao.maps.LatLng(place.y, place.x)
     });
 
-    kakao.maps.event.addListener(marker, 'click', function() {
+    kakao.maps.event.addListener(marker2, 'click', function() {
         infowindow.setContent('<div style="padding:5px;font-size:12px;">' + place.place_name + '</div>');
-        infowindow.open(map, marker);
+        infowindow.open(map, marker2);
     });
 
-    markers.push(marker);
+    markers2.push(marker2);
 }
 
 function removeMarker2() {
-    for (var i = 0; i < markers.length; i++) {
-        markers[i].setMap(null);
+    for (var i = 0; i < markers2.length; i++) {
+        markers2[i].setMap(null);
     }   
-    markers = [];
+    markers2 = [];
 }
 
 function displayPagination2(pagination) {
-    var paginationEl = document.getElementById('pagination'),
+    var paginationEl = document.getElementById('pagination2'), 
         fragment = document.createDocumentFragment(),
         i;
 
