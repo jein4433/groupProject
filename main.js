@@ -6,12 +6,6 @@ var options = {
 
 var map = new kakao.maps.Map(container, options);
 var ps = new kakao.maps.services.Places(); 
-var directionsService = new kakao.maps.services.Directions(); 
-var directionsRenderer = new kakao.maps.DirectionsRenderer({
-    map: map,
-    suppressMarkers: true, 
-    preserveViewport: true 
-});
 var infowindow = new kakao.maps.InfoWindow({zIndex:1});
 var markers = [];
 var markers2 = [];
@@ -138,7 +132,7 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
             Math.sin(Δλ/2) * Math.sin(Δλ/2);
     var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 
-    var distance = R * c; // in metres
+    var distance = R * c;
     return distance;
 }
 
@@ -150,20 +144,7 @@ function displayDistance() {
 }
 
 function calculateRoute() {
-    var request = {
-        origin: new kakao.maps.LatLng(startCoords.lat, startCoords.lng),
-        destination: new kakao.maps.LatLng(endCoords.lat, endCoords.lng),
-        travelMode: kakao.maps.services.TravelMode.DRIVING 
-    };
-
-    directionsService.route(request, function(result, status) {
-        if (status === kakao.maps.services.Status.OK) {
-            directionsRenderer.setDirections(result);
-            displayDistance();
-        } else {
-            alert('경로를 찾을 수 없습니다.');
-        }
-    });
+    displayDistance();
 }
 
 function removeMarker() {
