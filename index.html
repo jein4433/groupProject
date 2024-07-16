@@ -7,8 +7,6 @@
 </head>
 <body>
     <div id="map" style="width:100%;height:500px;"></div>
-    <div id="pagination"></div>
-    <div id="pagination2"></div>
     <div class="search-container">
         <span class="search-icon" onclick="toggleSearch()">🔍</span>
         <input type="text" id="search-start" placeholder="출발지" onkeypress="handleSearch(event)">
@@ -23,6 +21,8 @@
         <p id="distance-value">거리: </p>
     </div>
     <button onclick="calculateRoute()">경로 찾기</button>
+    <div id="pagination"></div>
+    <div id="pagination2"></div>
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=8fa6250a0ecb635c10de0eb564e22c52&libraries=services"></script>
     <script src="main.js"></script>
 </body>
