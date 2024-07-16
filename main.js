@@ -211,7 +211,7 @@ function onOffSearch() {
 
 function findRoute() {
     if (!startCoords || !endCoords) {
-        alert('출발지와 도착지를 모두 선택해주세요.');
+        alert('출발지와 도착지를 선택해주세요.');
         return;
     }
 
@@ -223,7 +223,7 @@ function findRoute() {
     fetch(url, {
         method: 'GET',
         headers: {
-            'Authorization': 'KakaoAK YOUR_REST_API_KEY'
+            'Authorization': 'KakaoAK 8fa6250a0ecb635c10de0eb564e22c52'
         }
     })
     .then(response => response.json())
