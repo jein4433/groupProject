@@ -29,7 +29,7 @@ body {
 .coordinates{
     position:absolute;
     top:600px;
-    left:40px;
+    left:10px;
     z-index:2;
     background-color:white;
 }
