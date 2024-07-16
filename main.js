@@ -115,51 +115,6 @@ function selectEndLocation(lat, lng) {
     document.getElementById('end-coords').textContent = '도착지 좌표: ' + lat + ', ' + lng;
     alert('도착지 선택됨');
     infowindow.close();
-    if (startCoords && endCoords) {
-        calculateRoute();
-    }
-}
-
-function calculateDistance(lat1, lon1, lat2, lon2) {
-    var R = 6371e3; // metres
-    var φ1 = lat1 * Math.PI/180;
-    var φ2 = lat2 * Math.PI/180;
-    var Δφ = (lat2 - lat1) * Math.PI/180;
-    var Δλ = (lon2 - lon1) * Math.PI/180;
-
-    var a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
-            Math.cos(φ1) * Math.cos(φ2) *
-            Math.sin(Δλ/2) * Math.sin(Δλ/2);
-    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-
-    var distance = R * c; // in metres
-    return distance;
-}
-
-function displayDistance() {
-    if (startCoords && endCoords) {
-        var distance = calculateDistance(startCoords.lat, startCoords.lng, endCoords.lat, endCoords.lng);
-        document.getElementById('distance-value').textContent = '거리: ' + (distance / 1000).toFixed(2) + ' km';
-    }
-}
-
-function calculateRoute() {
-    displayDistance();
-
-    var linePath = [
-        new kakao.maps.LatLng(startCoords.lat, startCoords.lng),
-        new kakao.maps.LatLng(endCoords.lat, endCoords.lng)
-    ];
-
-    var polyline = new kakao.maps.Polyline({
-        path: linePath,
-        strokeWeight: 5,
-        strokeColor: '#FF0000',
-        strokeOpacity: 1,
-        strokeStyle: 'solid'
-    });
-
-    polyline.setMap(map);
 }
 
 function removeMarker() {
@@ -252,4 +207,41 @@ function onOffSearch() {
     } else {
         searchEnd.style.display = 'none';
     }
+}
+
+function findRoute() {
+    if (!startCoords || !endCoords) {
+        alert('출발지와 도착지를 모두 선택해주세요.');
+        return;
+    }
+
+    var start = `${startCoords.lng},${startCoords.lat}`;
+    var end = `${endCoords.lng},${endCoords.lat}`;
+
+    var url = `https://apis-navi.kakaomobility.com/v1/waypoints/directions?origin=${start}&destination=${end}`;
+
+    fetch(url, {
+        method: 'GET',
+        headers: {
+            'Authorization': 'KakaoAK YOUR_REST_API_KEY'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data && data.routes && data.routes[0]) {
+            var path = data.routes[0].sections[0].roads.map(road => new kakao.maps.LatLng(road.x, road.y));
+            var polyline = new kakao.maps.Polyline({
+                map: map,
+                path: path,
+                strokeWeight: 5,
+                strokeColor: 'blue',
+                strokeOpacity: 0.7,
+                strokeStyle: 'solid'
+            });
+            map.setBounds(new kakao.maps.LatLngBounds(startCoords, endCoords));
+        } else {
+            alert('경로를 찾을 수 없습니다.');
+        }
+    })
+    .catch(error => console.error('Error:', error));
 }
