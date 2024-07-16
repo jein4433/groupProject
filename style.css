@@ -38,3 +38,7 @@ body {
     position:absolute;
     bottom:10px;
 }
+
+.polyline{
+    z-index:3;
+}
