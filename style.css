@@ -28,7 +28,7 @@ body {
 
 .coordinates{
     position:absolute;
-    top:700px;
+    top:600px;
     left:40px;
     z-index:2;
 }
