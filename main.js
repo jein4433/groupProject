@@ -47,7 +47,7 @@ function placesSearchCB(data, status, pagination) {
                 });
                 
                 kakao.maps.event.addListener(marker, 'click', function() {
-                    infowindow.setContent('<div style="padding:5px;font-size:12px;">' + place.place_name + '<br><button onclick="selectStartLocation(' + place.y + ', ' + place.x + ')">Select as Start</button></div>');
+                    infowindow.setContent('<div style="padding:5px;font-size:12px;">' + place.place_name + '<br><button onclick="출발지 선택하기(' + place.y + ', ' + place.x + ')">Select as Start</button></div>');
                     infowindow.open(map, marker);
                 });
                 
@@ -63,7 +63,7 @@ function placesSearchCB(data, status, pagination) {
 
 function selectStartLocation(lat, lng) {
     startCoords = {lat: lat, lng: lng};
-    alert('Start location selected!');
+    alert('출발지 선택됨');
     infowindow.close();
 }
 
@@ -95,7 +95,7 @@ function placesSearchCB2(data, status, pagination) {
                 });
 
                 kakao.maps.event.addListener(marker2, 'click', function() {
-                    infowindow.setContent('<div style="padding:5px;font-size:12px;">' + place.place_name + '<br><button onclick="selectEndLocation(' + place.y + ', ' + place.x + ')">Select as End</button></div>');
+                    infowindow.setContent('<div style="padding:5px;font-size:12px;">' + place.place_name + '<br><button onclick="도착지 선택하기(' + place.y + ', ' + place.x + ')">Select as End</button></div>');
                     infowindow.open(map, marker2);
                 });
 
@@ -111,29 +111,29 @@ function placesSearchCB2(data, status, pagination) {
 
 function selectEndLocation(lat, lng) {
     endCoords = {lat: lat, lng: lng};
-    alert('End location selected!');
+    alert('도착지 선택됨');
     infowindow.close();
     if (startCoords && endCoords) {
         calculateMidpoint();
     }
 }
 
-function calculateMidpoint() {
-    var midLat = (startCoords.lat + endCoords.lat) / 2;
-    var midLng = (startCoords.lng + endCoords.lng) / 2;
+// function calculateMidpoint() {
+//     var midLat = (startCoords.lat + endCoords.lat) / 2;
+//     var midLng = (startCoords.lng + endCoords.lng) / 2;
 
-    var midpointMarker = new kakao.maps.Marker({
-        map: map,
-        position: new kakao.maps.LatLng(midLat, midLng),
-        image: new kakao.maps.MarkerImage(
-            'http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_purple.png', // Custom purple marker image URL
-            new kakao.maps.Size(24, 35) // Marker image size
-        )
-    });
+//     var midpointMarker = new kakao.maps.Marker({
+//         map: map,
+//         position: new kakao.maps.LatLng(midLat, midLng),
+//         image: new kakao.maps.MarkerImage(
+//             'http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_purple.png', 
+//             new kakao.maps.Size(30, 35)
+//         )
+//     });
 
-    infowindow.setContent('<div style="padding:5px;font-size:12px;">Midpoint</div>');
-    infowindow.open(map, midpointMarker);
-}
+//     infowindow.setContent('<div style="padding:5px;font-size:12px;">Midpoint</div>');
+//     infowindow.open(map, midpointMarker);
+// }
 
 function removeMarker() {
     for (var i = 0; i < markers.length; i++) {
@@ -226,3 +226,4 @@ function onOffSearch() {
         searchEnd.style.display = 'none';
     }
 }
+
