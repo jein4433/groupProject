@@ -16,7 +16,7 @@ function handleSearch(event) {
 }
 
 function searchPlaces() {
-    var keyword = document.getElementById('search-bar').value;
+    var keyword = document.getElementById('search-start').value;
 
     if (!keyword.replace(/^\s+|\s+$/g, '')) {
         alert('키워드를 입력해주세요!');
