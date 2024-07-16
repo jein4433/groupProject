@@ -12,13 +12,11 @@ var markers = [];
 function handleSearch(event) {
     if (event.key === 'Enter') {
         searchPlaces();
-        searchDestination();
     }
 }
 
 function SearchHandle(event) {
     if (event.key === 'Enter') {
-        searchPlaces();
         searchDestination();
     }
 }
