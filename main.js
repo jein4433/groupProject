@@ -144,8 +144,20 @@ function calculateRoute(start, end) {
             directionsRenderer.setDirections(result);
 
             // 거리와 소요 시간 정보를 페이지에 표시
-            document.getElementById('distance-info').textContent = '거리: ' + distance;
-            document.getElementById('duration-info').textContent = '소요 시간: ' + duration;
+            var infoDiv = document.getElementById('info');
+            if (!infoDiv) {
+                infoDiv = document.createElement('div');
+                infoDiv.id = 'info';
+                infoDiv.style.position = 'absolute';
+                infoDiv.style.bottom = '10px';
+                infoDiv.style.left = '10px';
+                infoDiv.style.backgroundColor = '#fff';
+                infoDiv.style.padding = '10px';
+                infoDiv.style.borderRadius = '5px';
+                infoDiv.style.boxShadow = '0 2px 5px rgba(0,0,0,0.3)';
+                document.body.appendChild(infoDiv);
+            }
+            infoDiv.innerHTML = '<p>거리: ' + distance + '</p><p>소요 시간: ' + duration + '</p>';
 
             // 지도에 전체 경로를 맞추도록 범위 설정
             var bounds = new kakao.maps.LatLngBounds();
