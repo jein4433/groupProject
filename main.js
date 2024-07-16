@@ -11,10 +11,6 @@ var markers = [];
 var markers2 = [];
 var startCoords, endCoords;
 
-// Directions service and renderer
-var directionsService = new kakao.maps.services.Directions();
-var directionsRenderer = new kakao.maps.DirectionsRenderer({ map: map });
-
 function handleSearch(event) {
     if (event.key === 'Enter') {
         searchPlaces();
@@ -70,9 +66,6 @@ function selectStartLocation(lat, lng) {
     document.getElementById('start-coords').textContent = '출발지 좌표: ' + lat + ', ' + lng;
     alert('출발지 선택됨');
     infowindow.close();
-    if (startCoords && endCoords) {
-        calculateRoute(startCoords, endCoords);
-    }
 }
 
 function searchDestination() {
@@ -123,53 +116,8 @@ function selectEndLocation(lat, lng) {
     alert('도착지 선택됨');
     infowindow.close();
     if (startCoords && endCoords) {
-        calculateRoute(startCoords, endCoords);
+        calculateMidpoint();
     }
-}
-
-function calculateRoute(start, end) {
-    var request = {
-        origin: new kakao.maps.LatLng(start.lat, start.lng),
-        destination: new kakao.maps.LatLng(end.lat, end.lng),
-        travelMode: kakao.maps.TravelMode.DRIVING // 또는 kakao.maps.TravelMode.WALKING
-    };
-
-    directionsService.route(request, function(result, status) {
-        if (status === kakao.maps.services.Status.OK) {
-            var route = result.routes[0];
-            var distance = route.legs[0].distance.text; // 거리 정보
-            var duration = route.legs[0].duration.text; // 소요 시간 정보
-
-            // 경로를 지도에 표시
-            directionsRenderer.setDirections(result);
-
-            // 거리와 소요 시간 정보를 페이지에 표시
-            var infoDiv = document.getElementById('info');
-            if (!infoDiv) {
-                infoDiv = document.createElement('div');
-                infoDiv.id = 'info';
-                infoDiv.style.position = 'absolute';
-                infoDiv.style.bottom = '10px';
-                infoDiv.style.left = '10px';
-                infoDiv.style.backgroundColor = '#fff';
-                infoDiv.style.padding = '10px';
-                infoDiv.style.borderRadius = '5px';
-                infoDiv.style.boxShadow = '0 2px 5px rgba(0,0,0,0.3)';
-                document.body.appendChild(infoDiv);
-            }
-            infoDiv.innerHTML = '<p>거리: ' + distance + '</p><p>소요 시간: ' + duration + '</p>';
-
-            // 지도에 전체 경로를 맞추도록 범위 설정
-            var bounds = new kakao.maps.LatLngBounds();
-            var path = route.overview_path;
-            for (var i = 0; i < path.length; i++) {
-                bounds.extend(path[i]);
-            }
-            map.setBounds(bounds);
-        } else {
-            alert('경로를 계산할 수 없습니다.');
-        }
-    });
 }
 
 function removeMarker() {
@@ -263,3 +211,17 @@ function onOffSearch() {
         searchEnd.style.display = 'none';
     }
 }
+
+function searchPubTransPathAJAX() {
+	var xhr = new XMLHttpRequest();
+	var url = "https://api.odsay.com/v1/api/searchPubTransPathT?SX=126.9027279&SY=37.5349277&EX=126.9145430&EY=37.5499421&apiKey={7sO89d90bpaT1SW3v16sDA}";
+	xhr.open("GET", url, true);
+	xhr.send();
+	xhr.onreadystatechange = function() {
+
+		if (xhr.readyState == 4 && xhr.status == 200) {
+			console.log( xhr.responseText ); // <- xhr.responseText 로 결과를 가져올 수 있음
+		}
+	}
+}
+     
