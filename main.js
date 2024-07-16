@@ -10,6 +10,13 @@ var infowindow = new kakao.maps.InfoWindow({zIndex:1});
 var markers = [];
 var markers2 = [];
 var startCoords, endCoords;
+var polyline = new kakao.maps.Polyline({
+    path: [],
+    strokeWeight: 5,
+    strokeColor: '#FF0000',
+    strokeOpacity: 0.7,
+    strokeStyle: 'solid'
+});
 
 function handleSearch(event) {
     if (event.key === 'Enter') {
@@ -66,6 +73,7 @@ function selectStartLocation(lat, lng) {
     document.getElementById('start-coords').textContent = '출발지 좌표: ' + lat + ', ' + lng;
     alert('출발지 선택됨');
     infowindow.close();
+    updatePolyline();
 }
 
 function searchDestination() {
@@ -115,6 +123,7 @@ function selectEndLocation(lat, lng) {
     document.getElementById('end-coords').textContent = '도착지 좌표: ' + lat + ', ' + lng;
     alert('도착지 선택됨');
     infowindow.close();
+    updatePolyline();
 }
 
 function removeMarker() {
@@ -129,6 +138,37 @@ function removeMarker2() {
         markers2[i].setMap(null);
     }   
     markers2 = [];
+}
+
+function updatePolyline() {
+    if (startCoords && endCoords) {
+        var path = [
+            new kakao.maps.LatLng(startCoords.lat, startCoords.lng),
+            new kakao.maps.LatLng(endCoords.lat, endCoords.lng)
+        ];
+        
+        polyline.setPath(path);
+        polyline.setMap(map);
+
+        // 거리 계산
+        var distance = getDistance(startCoords.lat, startCoords.lng, endCoords.lat, endCoords.lng);
+        document.getElementById('distance').textContent = '거리: ' + distance.toFixed(2) + ' km';
+    }
+}
+
+function getDistance(lat1, lng1, lat2, lng2) {
+    var R = 6371; // 지구의 반경 (킬로미터)
+    var dLat = toRad(lat2 - lat1);
+    var dLng = toRad(lng2 - lng1);
+    var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+            Math.sin(dLng / 2) * Math.sin(dLng / 2);
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+}
+
+function toRad(degrees) {
+    return degrees * Math.PI / 180;
 }
 
 function displayPagination(pagination) {
