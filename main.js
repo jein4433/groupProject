@@ -132,7 +132,7 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
             Math.sin(Δλ/2) * Math.sin(Δλ/2);
     var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 
-    var distance = R * c;
+    var distance = R * c; // in metres
     return distance;
 }
 
@@ -145,6 +145,21 @@ function displayDistance() {
 
 function calculateRoute() {
     displayDistance();
+
+    var linePath = [
+        new kakao.maps.LatLng(startCoords.lat, startCoords.lng),
+        new kakao.maps.LatLng(endCoords.lat, endCoords.lng)
+    ];
+
+    var polyline = new kakao.maps.Polyline({
+        path: linePath,
+        strokeWeight: 5,
+        strokeColor: '#FF0000',
+        strokeOpacity: 1,
+        strokeStyle: 'solid'
+    });
+
+    polyline.setMap(map);
 }
 
 function removeMarker() {
