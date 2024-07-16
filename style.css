@@ -8,6 +8,7 @@ body {
 #map {
     width: 100%;
     height: 800px;
+    z-index: 1;
 }
 
 .search-container {
@@ -28,4 +29,5 @@ body {
 .coordinates{
     position:absolute;
     top:30px;
+    z-index:2;
 }
