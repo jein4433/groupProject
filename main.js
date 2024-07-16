@@ -63,6 +63,7 @@ function placesSearchCB(data, status, pagination) {
 
 function selectStartLocation(lat, lng) {
     startCoords = {lat: lat, lng: lng};
+    document.getElementById('start-coords').textContent = '출발지 좌표: ' + lat + ', ' + lng;
     alert('출발지 선택됨');
     infowindow.close();
 }
@@ -111,29 +112,13 @@ function placesSearchCB2(data, status, pagination) {
 
 function selectEndLocation(lat, lng) {
     endCoords = {lat: lat, lng: lng};
+    document.getElementById('end-coords').textContent = '도착지 좌표: ' + lat + ', ' + lng;
     alert('도착지 선택됨');
     infowindow.close();
     if (startCoords && endCoords) {
         calculateMidpoint();
     }
 }
-
-// function calculateMidpoint() {
-//     var midLat = (startCoords.lat + endCoords.lat) / 2;
-//     var midLng = (startCoords.lng + endCoords.lng) / 2;
-
-//     var midpointMarker = new kakao.maps.Marker({
-//         map: map,
-//         position: new kakao.maps.LatLng(midLat, midLng),
-//         image: new kakao.maps.MarkerImage(
-//             'http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_purple.png', 
-//             new kakao.maps.Size(30, 35)
-//         )
-//     });
-
-//     infowindow.setContent('<div style="padding:5px;font-size:12px;">Midpoint</div>');
-//     infowindow.open(map, midpointMarker);
-// }
 
 function removeMarker() {
     for (var i = 0; i < markers.length; i++) {
@@ -226,4 +211,3 @@ function onOffSearch() {
         searchEnd.style.display = 'none';
     }
 }
-
