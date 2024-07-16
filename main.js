@@ -6,6 +6,12 @@ var options = {
 
 var map = new kakao.maps.Map(container, options);
 var ps = new kakao.maps.services.Places(); 
+var directionsService = new kakao.maps.services.Directions(); 
+var directionsRenderer = new kakao.maps.DirectionsRenderer({
+    map: map,
+    suppressMarkers: true, 
+    preserveViewport: true 
+});
 var infowindow = new kakao.maps.InfoWindow({zIndex:1});
 var markers = [];
 var markers2 = [];
@@ -116,8 +122,48 @@ function selectEndLocation(lat, lng) {
     alert('도착지 선택됨');
     infowindow.close();
     if (startCoords && endCoords) {
-        calculateMidpoint();
+        calculateRoute();
     }
+}
+
+function calculateDistance(lat1, lon1, lat2, lon2) {
+    var R = 6371e3; // metres
+    var φ1 = lat1 * Math.PI/180;
+    var φ2 = lat2 * Math.PI/180;
+    var Δφ = (lat2 - lat1) * Math.PI/180;
+    var Δλ = (lon2 - lon1) * Math.PI/180;
+
+    var a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+            Math.cos(φ1) * Math.cos(φ2) *
+            Math.sin(Δλ/2) * Math.sin(Δλ/2);
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+    var distance = R * c; // in metres
+    return distance;
+}
+
+function displayDistance() {
+    if (startCoords && endCoords) {
+        var distance = calculateDistance(startCoords.lat, startCoords.lng, endCoords.lat, endCoords.lng);
+        document.getElementById('distance-value').textContent = '거리: ' + (distance / 1000).toFixed(2) + ' km';
+    }
+}
+
+function calculateRoute() {
+    var request = {
+        origin: new kakao.maps.LatLng(startCoords.lat, startCoords.lng),
+        destination: new kakao.maps.LatLng(endCoords.lat, endCoords.lng),
+        travelMode: kakao.maps.services.TravelMode.DRIVING 
+    };
+
+    directionsService.route(request, function(result, status) {
+        if (status === kakao.maps.services.Status.OK) {
+            directionsRenderer.setDirections(result);
+            displayDistance();
+        } else {
+            alert('경로를 찾을 수 없습니다.');
+        }
+    });
 }
 
 function removeMarker() {
