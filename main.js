@@ -61,12 +61,37 @@ function placesSearchCB(data, status, pagination) {
     } 
 }
 
+function calculateDistance(lat1, lon1, lat2, lon2) {
+    var R = 6371e3; // metres
+    var φ1 = lat1 * Math.PI/180; // φ, λ in radians
+    var φ2 = lat2 * Math.PI/180;
+    var Δφ = (lat2 - lat1) * Math.PI/180;
+    var Δλ = (lon2 - lon1) * Math.PI/180;
+
+    var a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+            Math.cos(φ1) * Math.cos(φ2) *
+            Math.sin(Δλ/2) * Math.sin(Δλ/2);
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+    var distance = R * c; // in metres
+    return distance;
+}
+
+function displayDistance() {
+    if (startCoords && endCoords) {
+        var distance = calculateDistance(startCoords.lat, startCoords.lng, endCoords.lat, endCoords.lng);
+        document.getElementById('distance-value').textContent = '거리: ' + (distance / 1000).toFixed(2) + ' km';
+    }
+}
+
 function selectStartLocation(lat, lng) {
     startCoords = {lat: lat, lng: lng};
     document.getElementById('start-coords').textContent = '출발지 좌표: ' + lat + ', ' + lng;
     alert('출발지 선택됨');
     infowindow.close();
 }
+
+displayDistance();
 
 function searchDestination() {
     var keyword2 = document.getElementById('search-end').value;
