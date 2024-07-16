@@ -28,6 +28,6 @@ body {
 
 .coordinates{
     position:absolute;
-    top:30px;
+    top:500px;
     z-index:2;
 }
