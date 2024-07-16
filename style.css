@@ -24,3 +24,8 @@ body {
     width: 200px;
     padding: 5px;
 }
+
+.coordinates{
+    position:absolute;
+    top:30px;
+}
