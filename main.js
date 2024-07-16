@@ -104,11 +104,21 @@ function removeAllChildNods(el) {
 }
 
 function toggleSearch() {
-    var searchBar = document.getElementById('search-bar');
-    if (searchBar.style.display === 'none' || searchBar.style.display === '') {
-        searchBar.style.display = 'inline-block';
-        searchBar.focus();
+    var searchStart = document.getElementById('search-start');
+    if (searchStart.style.display === 'none' || searchStart.style.display === '') {
+        searchStart.style.display = 'inline-block';
+        searchStart.focus();
     } else {
-        searchBar.style.display = 'none';
+        searchStart.style.display = 'none';
+    }
+}
+
+function onOffSearch() {
+    var searchEnd = document.getElementById('search-end');
+    if (searchEnd.style.display === 'none' || searchEnd.style.display === '') {
+        searchEnd.style.display = 'inline-block';
+        searchEnd.focus();
+    } else {
+        searchEnd.style.display = 'none';
     }
 }
