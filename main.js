@@ -9,6 +9,7 @@ var ps = new kakao.maps.services.Places();
 var infowindow = new kakao.maps.InfoWindow({zIndex:1});
 var markers = [];
 var markers2 = [];
+var startCoords, endCoords;
 
 function handleSearch(event) {
     if (event.key === 'Enter') {
@@ -35,31 +36,103 @@ function searchPlaces() {
 
 function placesSearchCB(data, status, pagination) {
     if (status === kakao.maps.services.Status.OK) {
+        removeMarker();
         var bounds = new kakao.maps.LatLngBounds();
         
         for (var i = 0; i < data.length; i++) {
-            displayMarker(data[i]);    
-            bounds.extend(new kakao.maps.LatLng(data[i].y, data[i].x));
+            (function(place) {
+                var marker = new kakao.maps.Marker({
+                    map: map,
+                    position: new kakao.maps.LatLng(place.y, place.x)
+                });
+                
+                kakao.maps.event.addListener(marker, 'click', function() {
+                    infowindow.setContent('<div style="padding:5px;font-size:12px;">' + place.place_name + '<br><button onclick="selectStartLocation(' + place.y + ', ' + place.x + ')">Select as Start</button></div>');
+                    infowindow.open(map, marker);
+                });
+                
+                markers.push(marker);
+                bounds.extend(new kakao.maps.LatLng(place.y, place.x));
+            })(data[i]);
         }
 
         map.setBounds(bounds);
-
         displayPagination(pagination);
     } 
 }
 
-function displayMarker(place) {
-    var marker = new kakao.maps.Marker({
+function selectStartLocation(lat, lng) {
+    startCoords = {lat: lat, lng: lng};
+    alert('Start location selected!');
+    infowindow.close();
+}
+
+function searchDestination() {
+    var keyword2 = document.getElementById('search-end').value;
+
+    if (!keyword2.replace(/^\s+|\s+$/g, '')) {
+        alert('키워드를 입력해주세요!');
+        return false;
+    }
+
+    ps.keywordSearch(keyword2, placesSearchCB2);
+}
+
+function placesSearchCB2(data, status, pagination) {
+    if (status === kakao.maps.services.Status.OK) {
+        removeMarker2();
+        var bounds2 = new kakao.maps.LatLngBounds();
+        
+        for (var i = 0; i < data.length; i++) {
+            (function(place) {
+                var marker2 = new kakao.maps.Marker({
+                    map: map,
+                    position: new kakao.maps.LatLng(place.y, place.x),
+                    image: new kakao.maps.MarkerImage(
+                        'http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png',
+                        new kakao.maps.Size(24, 35)
+                    )
+                });
+
+                kakao.maps.event.addListener(marker2, 'click', function() {
+                    infowindow.setContent('<div style="padding:5px;font-size:12px;">' + place.place_name + '<br><button onclick="selectEndLocation(' + place.y + ', ' + place.x + ')">Select as End</button></div>');
+                    infowindow.open(map, marker2);
+                });
+
+                markers2.push(marker2);
+                bounds2.extend(new kakao.maps.LatLng(place.y, place.x));
+            })(data[i]);
+        }
+
+        map.setBounds(bounds2);
+        displayPagination2(pagination);
+    } 
+}
+
+function selectEndLocation(lat, lng) {
+    endCoords = {lat: lat, lng: lng};
+    alert('End location selected!');
+    infowindow.close();
+    if (startCoords && endCoords) {
+        calculateMidpoint();
+    }
+}
+
+function calculateMidpoint() {
+    var midLat = (startCoords.lat + endCoords.lat) / 2;
+    var midLng = (startCoords.lng + endCoords.lng) / 2;
+
+    var midpointMarker = new kakao.maps.Marker({
         map: map,
-        position: new kakao.maps.LatLng(place.y, place.x)
+        position: new kakao.maps.LatLng(midLat, midLng),
+        image: new kakao.maps.MarkerImage(
+            'http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_purple.png', // Custom purple marker image URL
+            new kakao.maps.Size(24, 35) // Marker image size
+        )
     });
 
-    kakao.maps.event.addListener(marker, 'click', function() {
-        infowindow.setContent('<div style="padding:5px;font-size:12px;">' + place.place_name + '</div>');
-        infowindow.open(map, marker);
-    });
-
-    markers.push(marker);
+    infowindow.setContent('<div style="padding:5px;font-size:12px;">Midpoint</div>');
+    infowindow.open(map, midpointMarker);
 }
 
 function removeMarker() {
@@ -69,8 +142,44 @@ function removeMarker() {
     markers = [];
 }
 
+function removeMarker2() {
+    for (var i = 0; i < markers2.length; i++) {
+        markers2[i].setMap(null);
+    }   
+    markers2 = [];
+}
+
 function displayPagination(pagination) {
     var paginationEl = document.getElementById('pagination'),
+        fragment = document.createDocumentFragment(),
+        i;
+
+    while (paginationEl.hasChildNodes()) {
+        paginationEl.removeChild(paginationEl.lastChild);
+    }
+
+    for (i = 1; i <= pagination.last; i++) {
+        var el = document.createElement('a');
+        el.href = "#";
+        el.innerHTML = i;
+
+        if (i === pagination.current) {
+            el.className = 'on';
+        } else {
+            el.onclick = (function(i) {
+                return function() {
+                    pagination.gotoPage(i);
+                }
+            })(i);
+        }
+
+        fragment.appendChild(el);
+    }
+    paginationEl.appendChild(fragment);
+}
+
+function displayPagination2(pagination) {
+    var paginationEl = document.getElementById('pagination2'), 
         fragment = document.createDocumentFragment(),
         i;
 
@@ -106,82 +215,6 @@ function toggleSearch() {
     } else {
         searchStart.style.display = 'none';
     }
-}
-
-function searchDestination() {
-    var keyword2 = document.getElementById('search-end').value;
-
-    if (!keyword2.replace(/^\s+|\s+$/g, '')) {
-        alert('키워드를 입력해주세요!');
-        return false;
-    }
-
-    ps.keywordSearch(keyword2, placesSearchCB2);
-}
-
-function placesSearchCB2(data, status, pagination) {
-    if (status === kakao.maps.services.Status.OK) {
-        var bounds2 = new kakao.maps.LatLngBounds();
-        
-        for (var i = 0; i < data.length; i++) {
-            displayMarker2(data[i]);    
-            bounds2.extend(new kakao.maps.LatLng(data[i].y, data[i].x));
-        }
-
-        map.setBounds(bounds2);
-
-        displayPagination2(pagination);
-    } 
-}
-
-function displayMarker2(place) {
-    var marker2 = new kakao.maps.Marker({
-        map: map,
-        position: new kakao.maps.LatLng(place.y, place.x)
-    });
-
-    kakao.maps.event.addListener(marker2, 'click', function() {
-        infowindow.setContent('<div style="padding:5px;font-size:12px;">' + place.place_name + '</div>');
-        infowindow.open(map, marker2);
-    });
-
-    markers2.push(marker2);
-}
-
-function removeMarker2() {
-    for (var i = 0; i < markers2.length; i++) {
-        markers2[i].setMap(null);
-    }   
-    markers2 = [];
-}
-
-function displayPagination2(pagination) {
-    var paginationEl = document.getElementById('pagination2'), 
-        fragment = document.createDocumentFragment(),
-        i;
-
-    while (paginationEl.hasChildNodes()) {
-        paginationEl.removeChild(paginationEl.lastChild);
-    }
-
-    for (i = 1; i <= pagination.last; i++) {
-        var el = document.createElement('a');
-        el.href = "#";
-        el.innerHTML = i;
-
-        if (i === pagination.current) {
-            el.className = 'on';
-        } else {
-            el.onclick = (function(i) {
-                return function() {
-                    pagination.gotoPage(i);
-                }
-            })(i);
-        }
-
-        fragment.appendChild(el);
-    }
-    paginationEl.appendChild(fragment);
 }
 
 function onOffSearch() {
