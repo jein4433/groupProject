@@ -18,15 +18,26 @@ function handleSearch(event) {
 function SearchHandle(event) {
     if (event.key === 'Enter') {
         searchPlaces();
+        searchDestination();
     }
 }
 
 
 function searchPlaces() {
     var keyword = document.getElementById('search-start').value;
-    var keyword = document.getElementById('search-end').value;
 
     if (!keyword.replace(/^\s+|\s+$/g, '')) {
+        alert('키워드를 입력해주세요!');
+        return false;
+    }
+
+    ps.keywordSearch(keyword, placesSearchCB);
+}
+
+function searchDestination() {
+    var keyword2 = document.getElementById('search-end').value;
+
+    if (!keyword2.replace(/^\s+|\s+$/g, '')) {
         alert('키워드를 입력해주세요!');
         return false;
     }
