@@ -15,6 +15,13 @@ function handleSearch(event) {
     }
 }
 
+function SearchHandle(event) {
+    if (event.key === 'Enter') {
+        searchPlaces();
+    }
+}
+
+
 function searchPlaces() {
     var keyword = document.getElementById('search-start').value;
 
