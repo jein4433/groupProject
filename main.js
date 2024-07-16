@@ -6,6 +6,7 @@ var options = {
 
 var map = new kakao.maps.Map(container, options);
 var ps = new kakao.maps.services.Places(); 
+var routingService = new kakao.maps.services.Routes(); // Routing service
 var infowindow = new kakao.maps.InfoWindow({zIndex:1});
 var markers = [];
 var markers2 = [];
@@ -142,17 +143,21 @@ function removeMarker2() {
 
 function updatePolyline() {
     if (startCoords && endCoords) {
-        var path = [
-            new kakao.maps.LatLng(startCoords.lat, startCoords.lng),
-            new kakao.maps.LatLng(endCoords.lat, endCoords.lng)
-        ];
-        
-        polyline.setPath(path);
-        polyline.setMap(map);
+        routingService.route({
+            origin: new kakao.maps.LatLng(startCoords.lat, startCoords.lng),
+            destination: new kakao.maps.LatLng(endCoords.lat, endCoords.lng),
+            vehicle: 'car'
+        }, function(result, status) {
+            if (status === kakao.maps.services.Status.OK) {
+                var path = result.routes[0].path;
+                polyline.setPath(path);
+                polyline.setMap(map);
 
-        // 거리 계산
-        var distance = getDistance(startCoords.lat, startCoords.lng, endCoords.lat, endCoords.lng);
-        document.getElementById('distance').textContent = '거리: ' + distance.toFixed(2) + ' km';
+                // 거리 계산
+                var distance = getDistance(startCoords.lat, startCoords.lng, endCoords.lat, endCoords.lng);
+                document.getElementById('distance').textContent = '거리: ' + distance.toFixed(2) + ' km';
+            }
+        });
     }
 }
 
