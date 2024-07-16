@@ -116,7 +116,7 @@ function selectEndLocation(lat, lng) {
     alert('도착지 선택됨');
     infowindow.close();
     if (startCoords && endCoords) {
-        getRoute();
+        calculateMidpoint();
     }
 }
 
@@ -209,38 +209,5 @@ function onOffSearch() {
         searchEnd.focus();
     } else {
         searchEnd.style.display = 'none';
-    }
-}
-
-var directionsService = new kakao.maps.services.Directions();
-var directionsRenderer = new kakao.maps.DirectionsRenderer({
-    map: map,
-    suppressMarkers: true,
-    preserveViewport: true 
-});
-
-function getRoute(startLatLng, endLatLng) {
-    var request = {
-        origin: new kakao.maps.LatLng(startLatLng.lat, startLatLng.lng),
-        destination: new kakao.maps.LatLng(endLatLng.lat, endLatLng.lng),
-     //   travelMode: kakao.maps.services.TravelMode.DRIVING
-    };
-
-    directionsService.route(request, function(result, status) {
-        if (status === kakao.maps.services.Status.OK) {
-            directionsRenderer.setDirections(result);
-            var route = result.routes[0];
-            console.log('경로:', route);
-        } else {
-            alert('경로를 찾을 수 없습니다');
-        }
-    });
-}
-
-function calculateRoute() {
-    if (startCoords && endCoords) {
-        getRoute(startCoords, endCoords);
-    } else {
-        alert('출발지와 도착지를 선택해 주세요.');
     }
 }
