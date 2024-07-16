@@ -15,7 +15,7 @@ function handleSearch(event) {
     }
 }
 
-function SearchHandle(event) {
+function searchHandle(event) {
     if (event.key === 'Enter') {
         searchDestination();
     }
