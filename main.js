@@ -47,7 +47,7 @@ function placesSearchCB(data, status, pagination) {
                 });
                 
                 kakao.maps.event.addListener(marker, 'click', function() {
-                    infowindow.setContent('<div style="padding:5px;font-size:12px;">' + place.place_name + '<br><button onclick="출발지 선택하기(' + place.y + ', ' + place.x + ')">Select as Start</button></div>');
+                    infowindow.setContent('<div style="padding:5px;font-size:12px;">' + place.place_name + '<br><button onclick="Select as Start(' + place.y + ', ' + place.x + ')">출발지 선택하기</button></div>');
                     infowindow.open(map, marker);
                 });
                 
@@ -95,7 +95,7 @@ function placesSearchCB2(data, status, pagination) {
                 });
 
                 kakao.maps.event.addListener(marker2, 'click', function() {
-                    infowindow.setContent('<div style="padding:5px;font-size:12px;">' + place.place_name + '<br><button onclick="도착지 선택하기(' + place.y + ', ' + place.x + ')">Select as End</button></div>');
+                    infowindow.setContent('<div style="padding:5px;font-size:12px;">' + place.place_name + '<br><button onclick="Select as End(' + place.y + ', ' + place.x + ')">도착지 선택하기</button></div>');
                     infowindow.open(map, marker2);
                 });
 
