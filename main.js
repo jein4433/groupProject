@@ -150,14 +150,13 @@ function updatePolyline() {
         polyline.setPath(path);
         polyline.setMap(map);
 
-        // 거리 계산
         var distance = getDistance(startCoords.lat, startCoords.lng, endCoords.lat, endCoords.lng);
         document.getElementById('distance').textContent = '거리: ' + distance.toFixed(2) + ' km';
     }
 }
 
 function getDistance(lat1, lng1, lat2, lng2) {
-    var R = 6371; // 지구의 반경 (킬로미터)
+    var R = 6371;
     var dLat = toRad(lat2 - lat1);
     var dLng = toRad(lng2 - lng1);
     var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
